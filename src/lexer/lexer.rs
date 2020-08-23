@@ -44,21 +44,18 @@ impl Lexer {
         self.read_position += 1;
     }
 
-    
     fn read_identifier(&mut self) -> (TokenType, Vec<u8>) {
         let mut literal: Vec<u8> = vec![];
         let mut c: u8 = self.ch[0];
 
         while c.is_ascii_alphanumeric() {
             literal.push(self.ch[0]);
-            
             self.read_char();
             c = self.ch[0];
         }
 
         (TokenType::ILLEGAL, literal)
     }
-
 
     fn match_token_type(&mut self, ch: u8) -> (TokenType, Vec<u8>) {
         match ch {
@@ -105,42 +102,15 @@ mod tests {
     fn test_next_token() {
         let input = String::from("=+(){},;");
         let tests: [Token; 9] = [
-            Token {
-                token_type: TokenType::ASSIGN,
-                literal: vec![b'='],
-            },
-            Token {
-                token_type: TokenType::PLUS,
-                literal: vec![b'+'],
-            },
-            Token {
-                token_type: TokenType::LPAREN,
-                literal: vec![b'('],
-            },
-            Token {
-                token_type: TokenType::RPAREN,
-                literal: vec![b')'],
-            },
-            Token {
-                token_type: TokenType::LBRACE,
-                literal: vec![b'{'],
-            },
-            Token {
-                token_type: TokenType::RBRACE,
-                literal: vec![b'}'],
-            },
-            Token {
-                token_type: TokenType::COMMA,
-                literal: vec![b','],
-            },
-            Token {
-                token_type: TokenType::SEMICOLON,
-                literal: vec![b';'],
-            },
-            Token {
-                token_type: TokenType::EOF,
-                literal: vec![0],
-            },
+            Token::new(TokenType::ASSIGN, vec![b'=']),
+            Token::new(TokenType::PLUS, vec![b'+']),
+            Token::new(TokenType::LPAREN, vec![b'(']),
+            Token::new(TokenType::RPAREN, vec![b')']),
+            Token::new(TokenType::LBRACE, vec![b'{']),
+            Token::new(TokenType::RBRACE, vec![b'}']),
+            Token::new(TokenType::COMMA, vec![b',']),
+            Token::new(TokenType::SEMICOLON, vec![b';']),
+            Token::new(TokenType::EOF, vec![0]),
         ];
 
         let mut l: Lexer = Lexer::new(input);
