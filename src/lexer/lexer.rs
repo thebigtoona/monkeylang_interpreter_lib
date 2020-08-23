@@ -93,76 +93,51 @@ mod tests {
     #[test]
     fn test_next_token() {
         let input = String::from("=+(){},;");
-        struct TestToken {
-            expected_type: TokenType,
-            expected_literal: char,
-        }
-        let tests: [TestToken; 9] = [
-            // TestToken {
-            //     expected_type: TokenType::LET,
-            //     expected_literal: '',
-            // },
-            // TestToken {
-            //     expected_type: TokenType::Type,
-            //     expected_literal: '',
-            // },
-            // TestToken {
-            //     expected_type: TokenType::Type,
-            //     expected_literal: '',
-            // },
-            // TestToken {
-            //     expected_type: TokenType::Type,
-            //     expected_literal: '',
-            // },
-            // TestToken {
-            //     expected_type: TokenType::Type,
-            //     expected_literal: '',
-            // },
-
-
-            TestToken {
-                expected_type: TokenType::ASSIGN,
-                expected_literal: '=',
+        
+        let tests: [Token; 9] = [
+            Token {
+                token_type: TokenType::ASSIGN,
+                literal: '=',
             },
-            TestToken {
-                expected_type: TokenType::PLUS,
-                expected_literal: '+',
+            Token {
+                token_type: TokenType::PLUS,
+                literal: '+',
             },
-            TestToken {
-                expected_type: TokenType::LPAREN,
-                expected_literal: '(',
+            Token {
+                token_type: TokenType::LPAREN,
+                literal: '(',
             },
-            TestToken {
-                expected_type: TokenType::RPAREN,
-                expected_literal: ')',
+            Token {
+                token_type: TokenType::RPAREN,
+                literal: ')',
             },
-            TestToken {
-                expected_type: TokenType::LBRACE,
-                expected_literal: '{',
+            Token {
+                token_type: TokenType::LBRACE,
+                literal: '{',
             },
-            TestToken {
-                expected_type: TokenType::RBRACE,
-                expected_literal: '}',
+            Token {
+                token_type: TokenType::RBRACE,
+                literal: '}',
             },
-            TestToken {
-                expected_type: TokenType::COMMA,
-                expected_literal: ',',
+            Token {
+                token_type: TokenType::COMMA,
+                literal: ',',
             },
-            TestToken {
-                expected_type: TokenType::SEMICOLON,
-                expected_literal: ';',
+            Token {
+                token_type: TokenType::SEMICOLON,
+                literal: ';',
             },
-            TestToken {
-                expected_type: TokenType::EOF,
-                expected_literal: ' ',
+            Token {
+                token_type: TokenType::EOF,
+                literal: ' ',
             },
         ];
         let mut l: Lexer = Lexer::new(input);
 
         for tt in tests.iter() {
             let tok = l.next_token();
-            assert_eq!(tok.token_type, tt.expected_type);
-            assert_eq!(tok.literal, tt.expected_literal);
+            assert_eq!(tok.token_type, tt.token_type);
+            assert_eq!(tok.literal, tt.literal);
         }
     }
 }
