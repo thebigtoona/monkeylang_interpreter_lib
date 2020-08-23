@@ -44,38 +44,42 @@ impl Lexer {
         self.read_position += 1;
     }
 
+    
     fn read_identifier(&mut self) -> (TokenType, Vec<u8>) {
         let mut literal: Vec<u8> = vec![];
-        let mut c: char = self.ch[0] as char;
+        let mut c: u8 = self.ch[0];
 
-        // let start = self.position;
-        // let mut ahead = self.read_position;
-
-        while c.is_alphabetic() {
+        while c.is_ascii_alphanumeric() {
             literal.push(self.ch[0]);
             
             self.read_char();
-            c = self.ch[0] as char;
-            // ahead = self.read_position;
+            c = self.ch[0];
         }
 
         (TokenType::ILLEGAL, literal)
     }
 
-    fn match_token_type(&mut self, ch: char) -> (TokenType, Vec<u8>) {
+
+    fn match_token_type(&mut self, ch: u8) -> (TokenType, Vec<u8>) {
         match ch {
-            '=' => (TokenType::ASSIGN, vec![ch as u8]),
-            ';' => (TokenType::SEMICOLON, vec![ch as u8]),
-            '(' => (TokenType::LPAREN, vec![ch as u8]),
-            ')' => (TokenType::RPAREN, vec![ch as u8]),
-            '{' => (TokenType::LBRACE, vec![ch as u8]),
-            '}' => (TokenType::RBRACE, vec![ch as u8]),
-            '+' => (TokenType::PLUS, vec![ch as u8]),
-            ',' => (TokenType::COMMA, vec![ch as u8]),
+            b'=' => (TokenType::ASSIGN, vec![ch as u8]),
+            b';' => (TokenType::SEMICOLON, vec![ch as u8]),
+            b'(' => (TokenType::LPAREN, vec![ch as u8]),
+            b')' => (TokenType::RPAREN, vec![ch as u8]),
+            b'{' => (TokenType::LBRACE, vec![ch as u8]),
+            b'}' => (TokenType::RBRACE, vec![ch as u8]),
+            b'+' => (TokenType::PLUS, vec![ch as u8]),
+            b',' => (TokenType::COMMA, vec![ch as u8]),
+            0 => (TokenType::EOF, vec![0]),
             _ => {
-                if ch.is_alphabetic() {
+                if ch.is_ascii_alphabetic() {
                     let (tok_type, literal) = self.read_identifier();
                     // (Token::look_up_ident(literal), literal)
+                    (TokenType::IDENT, literal)
+                } else if ch.is_ascii_digit() {
+                    let (tok_type, literal) = self.read_identifier();
+                    // digit here
+                    // self.read_number
                     (TokenType::IDENT, literal)
                 } else {
                     (TokenType::ILLEGAL, vec![ch as u8])
@@ -85,14 +89,11 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> Token {
-        let (token_type, literal) = self.match_token_type(self.ch[0] as char);
+        let (token_type, literal) = self.match_token_type(self.ch[0]);
 
         self.read_char();
 
-        Token {
-            token_type,
-            literal
-        }
+        Token::new(token_type, literal)
     }
 }
 
@@ -137,7 +138,7 @@ mod tests {
                 literal: vec![b';'],
             },
             Token {
-                token_type: TokenType::ILLEGAL,
+                token_type: TokenType::EOF,
                 literal: vec![0],
             },
         ];
