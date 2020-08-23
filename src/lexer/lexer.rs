@@ -42,47 +42,24 @@ impl Lexer {
         self.read_position += 1;
     }
     pub fn next_token(&mut self) -> Token {
-        let tok = match self.ch {
-            '=' => Token {
-                token_type: TokenType::ASSIGN,
-                literal: self.ch,
-            },
-            ';' => Token {
-                token_type: TokenType::SEMICOLON,
-                literal: self.ch,
-            },
-            '(' => Token {
-                token_type: TokenType::LPAREN,
-                literal: self.ch,
-            },
-            ')' => Token {
-                token_type: TokenType::RPAREN,
-                literal: self.ch,
-            },
-            '{' => Token {
-                token_type: TokenType::LBRACE,
-                literal: self.ch,
-            },
-            '}' => Token {
-                token_type: TokenType::RBRACE,
-                literal: self.ch,
-            },
-            '+' => Token {
-                token_type: TokenType::PLUS,
-                literal: self.ch,
-            },
-            ',' => Token {
-                token_type: TokenType::COMMA,
-                literal: self.ch,
-            },
-            _ => Token {
-                token_type: TokenType::EOF,
-                literal: self.ch,
-            },
+        let tok: TokenType = match self.ch {
+            '=' => TokenType::ASSIGN,
+            ';' => TokenType::SEMICOLON,
+            '(' => TokenType::LPAREN,
+            ')' => TokenType::RPAREN,
+            '{' => TokenType::LBRACE,
+            '}' => TokenType::RBRACE,
+            '+' => TokenType::PLUS,
+            ',' => TokenType::COMMA,
+            _ => TokenType::ILLEGAL
         };
-
+        
         self.read_char();
-        tok
+
+        Token {
+            token_type: tok,
+            literal: self.ch,
+        }
     }
 }
 
