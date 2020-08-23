@@ -57,6 +57,8 @@ impl Lexer {
         (TokenType::ILLEGAL, literal)
     }
 
+    fn read_number() {}
+
     fn match_token_type(&mut self, ch: u8) -> (TokenType, Vec<u8>) {
         match ch {
             b'=' => (TokenType::ASSIGN, vec![ch as u8]),
@@ -98,8 +100,43 @@ impl Lexer {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
-    fn test_next_token() {
+    fn read_char() {
+        let input: String = String::from("test string");
+        let mut l: Lexer = Lexer::new(input);
+
+        assert_eq!(l.position, 0);
+        assert_eq!(l.read_position, 1);
+        
+        l.read_char();
+        
+        assert_eq!(l.position, 1);
+        assert_eq!(l.read_position, 2);
+    }
+
+    #[test]
+    fn read_identifier() {
+        let mut l: Lexer = Lexer::new("let five cat".to_string());
+        let tuple = l.read_identifier();
+        let bytes = vec![b'l', b'e', b't'];
+
+        assert_ne!(tuple.1.len(),(bytes.len()+1));
+        assert_eq!(tuple.1.len(), bytes.len());
+        
+        assert_eq!(tuple.1[0], b'l');
+        assert_eq!(tuple.1[1], b'e');
+        assert_eq!(tuple.1[2], b't');
+    }
+
+    #[test]
+    fn read_number() {
+        // 
+    }
+
+
+    #[test]
+    fn next_token() {
         let input = String::from("=+(){},;");
         let tests: [Token; 9] = [
             Token::new(TokenType::ASSIGN, vec![b'=']),
