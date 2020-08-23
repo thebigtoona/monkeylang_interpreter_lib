@@ -14,7 +14,7 @@ struct Lexer {
     input: String,
     position: usize,
     read_position: usize,
-    ch: char,
+    ch: Vec<u8>,
 }
 
 impl Lexer {
@@ -23,7 +23,7 @@ impl Lexer {
             input: input,
             position: 0,
             read_position: 0,
-            ch: ' ',
+            ch: vec![0],
         };
 
         l.read_char();
@@ -34,31 +34,64 @@ impl Lexer {
 impl Lexer {
     fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
-            self.ch = ' ';
+            self.ch = vec![0];
         } else {
-            self.ch = self.input.chars().nth(self.read_position).unwrap()
+            let ch = self.input.chars().nth(self.read_position).unwrap() as u8;
+            self.ch = vec![ch];
         }
+
         self.position = self.read_position;
         self.read_position += 1;
     }
+
+    fn read_identifier(&mut self) -> (TokenType, Vec<u8>) {
+        let mut literal: Vec<u8> = vec![];
+        let mut c: char = self.ch[0] as char;
+
+        // let start = self.position;
+        // let mut ahead = self.read_position;
+
+        while c.is_alphabetic() {
+            literal.push(self.ch[0]);
+            
+            self.read_char();
+            c = self.ch[0] as char;
+            // ahead = self.read_position;
+        }
+
+        (TokenType::ILLEGAL, literal)
+    }
+
+    fn match_token_type(&mut self, ch: char) -> (TokenType, Vec<u8>) {
+        match ch {
+            '=' => (TokenType::ASSIGN, vec![ch as u8]),
+            ';' => (TokenType::SEMICOLON, vec![ch as u8]),
+            '(' => (TokenType::LPAREN, vec![ch as u8]),
+            ')' => (TokenType::RPAREN, vec![ch as u8]),
+            '{' => (TokenType::LBRACE, vec![ch as u8]),
+            '}' => (TokenType::RBRACE, vec![ch as u8]),
+            '+' => (TokenType::PLUS, vec![ch as u8]),
+            ',' => (TokenType::COMMA, vec![ch as u8]),
+            _ => {
+                if ch.is_alphabetic() {
+                    let (tok_type, literal) = self.read_identifier();
+                    // (Token::look_up_ident(literal), literal)
+                    (TokenType::IDENT, literal)
+                } else {
+                    (TokenType::ILLEGAL, vec![ch as u8])
+                }
+            }
+        }
+    }
+
     pub fn next_token(&mut self) -> Token {
-        let tok: TokenType = match self.ch {
-            '=' => TokenType::ASSIGN,
-            ';' => TokenType::SEMICOLON,
-            '(' => TokenType::LPAREN,
-            ')' => TokenType::RPAREN,
-            '{' => TokenType::LBRACE,
-            '}' => TokenType::RBRACE,
-            '+' => TokenType::PLUS,
-            ',' => TokenType::COMMA,
-            _ => TokenType::ILLEGAL
-        };
-        
+        let (token_type, literal) = self.match_token_type(self.ch[0] as char);
+
         self.read_char();
 
         Token {
-            token_type: tok,
-            literal: self.ch,
+            token_type,
+            literal
         }
     }
 }
@@ -70,45 +103,45 @@ mod tests {
     #[test]
     fn test_next_token() {
         let input = String::from("=+(){},;");
-        
         let tests: [Token; 9] = [
             Token {
                 token_type: TokenType::ASSIGN,
-                literal: '=',
+                literal: vec![b'='],
             },
             Token {
                 token_type: TokenType::PLUS,
-                literal: '+',
+                literal: vec![b'+'],
             },
             Token {
                 token_type: TokenType::LPAREN,
-                literal: '(',
+                literal: vec![b'('],
             },
             Token {
                 token_type: TokenType::RPAREN,
-                literal: ')',
+                literal: vec![b')'],
             },
             Token {
                 token_type: TokenType::LBRACE,
-                literal: '{',
+                literal: vec![b'{'],
             },
             Token {
                 token_type: TokenType::RBRACE,
-                literal: '}',
+                literal: vec![b'}'],
             },
             Token {
                 token_type: TokenType::COMMA,
-                literal: ',',
+                literal: vec![b','],
             },
             Token {
                 token_type: TokenType::SEMICOLON,
-                literal: ';',
+                literal: vec![b';'],
             },
             Token {
-                token_type: TokenType::EOF,
-                literal: ' ',
+                token_type: TokenType::ILLEGAL,
+                literal: vec![0],
             },
         ];
+
         let mut l: Lexer = Lexer::new(input);
 
         for tt in tests.iter() {
