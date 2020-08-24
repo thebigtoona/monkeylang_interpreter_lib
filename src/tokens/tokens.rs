@@ -1,3 +1,5 @@
+use ascii::*;
+
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
     ILLEGAL,
@@ -23,40 +25,53 @@ pub enum TokenType {
 #[derive(Debug, PartialEq)]
 pub struct Token {
     pub token_type: TokenType,
-    pub literal: Vec<u8>,
+    pub literal: Vec<AsciiChar>,
 }
 
 impl Token {
-    pub fn new(
-        token_type: TokenType,
-        literal: Vec<u8>,
-    ) -> Token {
+    pub fn new(token_type: TokenType, literal: Vec<AsciiChar>) -> Token {
         Token {
             token_type,
-            literal
+            literal,
         }
     }
-    
-    // pub fn look_up_ident(literal: Vec<u8>) -> TokenType {
-    //     let l = str::from_utf8(literal);
-
-    //     match l {
-    //         "let" => TokenType::LET,
-    //         "fn" => TokenType::FUNCTION,
-    //         l.parse.unwrap_or(false) => TokenType::INT,
-    //     }
-
-    // }
+    pub fn look_up_ident(literal: Vec<AsciiChar>) -> TokenType {
+        if literal[0].is_ascii_digit() {
+            TokenType::INT
+        } else {
+            match literal.as_slice() {
+                [AsciiChar::f, AsciiChar::n] => TokenType::FUNCTION,
+                [AsciiChar::l, AsciiChar::e, AsciiChar::t] => TokenType::LET,
+                _ => TokenType::IDENT,
+            }
+        }
+    }
 }
-
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn new_token() {
-        let token = Token::new(TokenType::PLUS, vec![b'+']);
 
-        assert_eq!(token, Token { token_type: TokenType::PLUS, literal: vec![b'+']});
+    #[test]
+    fn new_token() {
+        let token = Token::new(TokenType::PLUS, vec![AsciiChar::Plus]);
+
+        assert_eq!(
+            token,
+            Token {
+                token_type: TokenType::PLUS,
+                literal: vec![AsciiChar::Plus]
+            }
+        );
+    }
+
+    #[test]
+    fn look_up_ident() {
+        let number_test = vec![AsciiChar::_3, AsciiChar::_6];
+        let string_test = vec![AsciiChar::f, AsciiChar::i, AsciiChar::v, AsciiChar::e];
+        let keyword_test = vec![AsciiChar::l, AsciiChar::e, AsciiChar::t];
+        assert_eq!(Token::look_up_ident(number_test), TokenType::INT);
+        assert_eq!(Token::look_up_ident(string_test), TokenType::IDENT);
+        assert_eq!(Token::look_up_ident(keyword_test), TokenType::LET);
     }
 }
