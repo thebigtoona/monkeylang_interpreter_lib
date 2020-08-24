@@ -1,6 +1,7 @@
 use ascii::*;
 
 #[derive(Debug, PartialEq)]
+#[warn(non_camel_case_types)]
 pub enum TokenType {
     ILLEGAL,
     EOF,
@@ -18,6 +19,8 @@ pub enum TokenType {
     // comparison operators
     LT,
     GT,
+    EQ,
+    NOT_EQ,
 
     // Delimiters
     COMMA,
