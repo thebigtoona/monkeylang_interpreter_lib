@@ -1,17 +1,5 @@
-// 1. take in src code -> tokens
-// 2. goes thru its input and outputs next token recognized
-// 3. does not need to buffer or save tokens
-// 4. there will only be 1 method: next_token(), to go thru the source
-//    code token by token, char by char.  outputs next token
-
-// init lexer w/ source code & then repetedly call next_token()
-// to reduce complexity we're using strings
-// #![feature(split_inclusive)]
-
 use crate::tokens::tokens::*;
 use ascii::*;
-
-// use std::convert::TryInto;
 
 struct Lexer {
     input: String,
@@ -74,13 +62,19 @@ impl Lexer {
 
         let result = match c.as_slice() {
             [AsciiChar::Equal] => (TokenType::ASSIGN, vec![AsciiChar::Equal]),
-            [AsciiChar::Semicolon] => (TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            [AsciiChar::Plus] => (TokenType::PLUS, vec![AsciiChar::Plus]),
+            [AsciiChar::Minus] => (TokenType::MINUS, vec![AsciiChar::Minus]),
+            [AsciiChar::Exclamation] => (TokenType::BANG, vec![AsciiChar::Exclamation]),
+            [AsciiChar::Slash] => (TokenType::SLASH, vec![AsciiChar::Slash]),
+            [AsciiChar::Asterisk] => (TokenType::ASTERISK, vec![AsciiChar::Asterisk]),
+            [AsciiChar::LessThan] => (TokenType::LT, vec![AsciiChar::LessThan]),
+            [AsciiChar::GreaterThan] => (TokenType::GT, vec![AsciiChar::GreaterThan]),
             [AsciiChar::ParenOpen] => (TokenType::LPAREN, vec![AsciiChar::ParenOpen]),
             [AsciiChar::ParenClose] => (TokenType::RPAREN, vec![AsciiChar::ParenClose]),
             [AsciiChar::CurlyBraceOpen] => (TokenType::LBRACE, vec![AsciiChar::CurlyBraceOpen]),
             [AsciiChar::CurlyBraceClose] => (TokenType::RBRACE, vec![AsciiChar::CurlyBraceClose]),
-            [AsciiChar::Plus] => (TokenType::PLUS, vec![AsciiChar::Plus]),
             [AsciiChar::Comma] => (TokenType::COMMA, vec![AsciiChar::Comma]),
+            [AsciiChar::Semicolon] => (TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
             [AsciiChar::Null] => (TokenType::EOF, vec![AsciiChar::Null]),
             _ => {
                 if self.ch[0].is_ascii_alphanumeric() {
@@ -177,9 +171,24 @@ mod tests {
 
     #[test]
     fn testing_advanced_input() {
-        let input: String = String::from("let five = 5;\nlet ten = 10;\n\nlet add = fn(x, y) {\n\nx + y;\n\n};\n\nlet result = add(five, ten);\n");
+        let input: String = String::from("let five = 5;
+let ten = 10;
+let add = fn(x, y) {
+    x + y;
+}; 
+let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
 
-        let tests: [Token; 36] = [
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
+");
+
+        let tests: [Token; 65] = [
+            //line 1
             Token::new(
                 TokenType::LET,
                 vec![AsciiChar::l, AsciiChar::e, AsciiChar::t],
@@ -191,6 +200,7 @@ mod tests {
             Token::new(TokenType::ASSIGN, vec![AsciiChar::Equal]),
             Token::new(TokenType::INT, vec![AsciiChar::_5]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 2
             Token::new(
                 TokenType::LET,
                 vec![AsciiChar::l, AsciiChar::e, AsciiChar::t],
@@ -202,6 +212,7 @@ mod tests {
             Token::new(TokenType::ASSIGN, vec![AsciiChar::Equal]),
             Token::new(TokenType::INT, vec![AsciiChar::_1, AsciiChar::_0]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 3
             Token::new(
                 TokenType::LET,
                 vec![AsciiChar::l, AsciiChar::e, AsciiChar::t],
@@ -218,12 +229,15 @@ mod tests {
             Token::new(TokenType::IDENT, vec![AsciiChar::y]),
             Token::new(TokenType::RPAREN, vec![AsciiChar::ParenClose]),
             Token::new(TokenType::LBRACE, vec![AsciiChar::CurlyBraceOpen]),
+            // line 4
             Token::new(TokenType::IDENT, vec![AsciiChar::x]),
             Token::new(TokenType::PLUS, vec![AsciiChar::Plus]),
             Token::new(TokenType::IDENT, vec![AsciiChar::y]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 5  }; 
             Token::new(TokenType::RBRACE, vec![AsciiChar::CurlyBraceClose]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 6  let result = add(five, ten);
             Token::new(
                 TokenType::LET,
                 vec![AsciiChar::l, AsciiChar::e, AsciiChar::t],
@@ -237,17 +251,17 @@ mod tests {
                     AsciiChar::u,
                     AsciiChar::l,
                     AsciiChar::t,
-                ],
-            ),
-            Token::new(TokenType::ASSIGN, vec![AsciiChar::Equal]),
-            Token::new(
-                TokenType::IDENT,
-                vec![AsciiChar::a, AsciiChar::d, AsciiChar::d],
-            ),
-            Token::new(TokenType::LPAREN, vec![AsciiChar::ParenOpen]),
-            Token::new(
-                TokenType::IDENT,
-                vec![AsciiChar::f, AsciiChar::i, AsciiChar::v, AsciiChar::e],
+                    ],
+                ),
+                Token::new(TokenType::ASSIGN, vec![AsciiChar::Equal]),
+                Token::new(
+                    TokenType::IDENT,
+                    vec![AsciiChar::a, AsciiChar::d, AsciiChar::d],
+                ),
+                Token::new(TokenType::LPAREN, vec![AsciiChar::ParenOpen]),
+                Token::new(
+                    TokenType::IDENT,
+                    vec![AsciiChar::f, AsciiChar::i, AsciiChar::v, AsciiChar::e],
             ),
             Token::new(TokenType::COMMA, vec![AsciiChar::Comma]),
             Token::new(
@@ -256,7 +270,45 @@ mod tests {
             ),
             Token::new(TokenType::RPAREN, vec![AsciiChar::ParenClose]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
-        ];
+            // line 7:  !-/*5;
+            Token::new(TokenType::BANG, vec![AsciiChar::Exclamation]),
+            Token::new(TokenType::MINUS, vec![AsciiChar::Minus]),
+            Token::new(TokenType::SLASH, vec![AsciiChar::Slash]),
+            Token::new(TokenType::ASTERISK, vec![AsciiChar::Asterisk]),
+            Token::new(TokenType::INT, vec![AsciiChar::_5]),
+            Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 8:  5 < 10 > 5;
+            Token::new(TokenType::INT, vec![AsciiChar::_5]),
+            Token::new(TokenType::LT, vec![AsciiChar::LessThan]),
+            Token::new(TokenType::INT, vec![AsciiChar::_1, AsciiChar::_0]),
+            Token::new(TokenType::GT, vec![AsciiChar::GreaterThan]),
+            Token::new(TokenType::INT, vec![AsciiChar::_5]),
+            Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 9
+            // line 10:  if (5 < 10) {
+            Token::new(TokenType::IF, vec![AsciiChar::i, AsciiChar::f]),
+            Token::new(TokenType::LPAREN, vec![AsciiChar::ParenOpen]),
+            Token::new(TokenType::INT, vec![AsciiChar::_5]),
+            Token::new(TokenType::LT, vec![AsciiChar::LessThan]),
+            Token::new(TokenType::INT, vec![AsciiChar::_1, AsciiChar::_0]),
+            Token::new(TokenType::RPAREN, vec![AsciiChar::ParenClose]),
+            Token::new(TokenType::LBRACE, vec![AsciiChar::CurlyBraceOpen]),
+            // line 11:  return true;
+            Token::new(TokenType::RETURN, vec![AsciiChar::r, AsciiChar::e, AsciiChar::t, AsciiChar::u, AsciiChar::r, AsciiChar::n]),
+            Token::new(TokenType::TRUE, vec![AsciiChar::t, AsciiChar::r, AsciiChar::u, AsciiChar::e]),
+            Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 12:  } else {
+            Token::new(TokenType::RBRACE, vec![AsciiChar::CurlyBraceClose]),
+            Token::new(TokenType::ELSE, vec![AsciiChar::e, AsciiChar::l, AsciiChar::s, AsciiChar::e]),
+            Token::new(TokenType::LBRACE, vec![AsciiChar::CurlyBraceOpen]),
+            // line 13:  return false;
+            Token::new(TokenType::RETURN, vec![AsciiChar::r, AsciiChar::e, AsciiChar::t, AsciiChar::u, AsciiChar::r, AsciiChar::n]),
+            Token::new(TokenType::FALSE, vec![AsciiChar::f, AsciiChar::a, AsciiChar::l, AsciiChar::s, AsciiChar::e]),
+            Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
+            // line 14:  }
+            Token::new(TokenType::RBRACE, vec![AsciiChar::CurlyBraceClose]),
+            ];
+
 
         let mut l: Lexer = Lexer::new(input);
 

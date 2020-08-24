@@ -8,8 +8,17 @@ pub enum TokenType {
     IDENT,
     INT,
     // Operators
-    ASSIGN,
+    ASSIGN, 
     PLUS,
+    MINUS,
+    BANG,
+    ASTERISK,
+    SLASH,
+
+    // comparison operators
+    LT,
+    GT,
+
     // Delimiters
     COMMA,
     SEMICOLON,
@@ -20,7 +29,13 @@ pub enum TokenType {
     // Keywords
     FUNCTION,
     LET,
+    TRUE,
+    FALSE,
+    IF,
+    ELSE,
+    RETURN
 }
+
 
 #[derive(Debug, PartialEq)]
 pub struct Token {
@@ -42,6 +57,11 @@ impl Token {
             match literal.as_slice() {
                 [AsciiChar::f, AsciiChar::n] => TokenType::FUNCTION,
                 [AsciiChar::l, AsciiChar::e, AsciiChar::t] => TokenType::LET,
+                [AsciiChar::t, AsciiChar::r, AsciiChar::u, AsciiChar::e] => TokenType::TRUE,
+                [AsciiChar::f, AsciiChar::a, AsciiChar::l, AsciiChar::s, AsciiChar::e] => TokenType::FALSE,
+                [AsciiChar::i, AsciiChar::f] => TokenType::IF,
+                [AsciiChar::e, AsciiChar::l, AsciiChar::s, AsciiChar::e] => TokenType::ELSE,
+                [AsciiChar::r, AsciiChar::e, AsciiChar::t, AsciiChar::u, AsciiChar::r, AsciiChar::n] => TokenType::RETURN,
                 _ => TokenType::IDENT,
             }
         }
