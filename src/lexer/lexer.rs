@@ -33,7 +33,6 @@ impl Lexer {
 
         self.position = self.read_position;
         self.read_position += 1;
-        println!("self.ch = {:?}", self.ch);
     }
 
     fn read_identifier(&mut self) -> Vec<AsciiChar> {
@@ -59,10 +58,9 @@ impl Lexer {
     }
 
     fn match_token_type(&mut self) -> (TokenType, Vec<AsciiChar>) {
-        let mut c = &self.ch;
         let mut default: bool = false;
-        
-        let result = match c.as_slice() {
+
+        let result = match self.ch.as_slice() {
             [AsciiChar::Equal] => {
                 // chk for equal or double equal
                 if [self.peek_char()] == [AsciiChar::Equal] {
@@ -99,11 +97,9 @@ impl Lexer {
             _ => {
                 default = true;
                 if self.ch[0].is_ascii_alphanumeric() {
-                    println!("lexer.rs, line 97, {:?}", c);
                     let literal = self.read_identifier();
                     (Token::look_up_ident(literal.clone()), literal)
                 } else {
-                    println!("lexer.rs, line 105, {:?}", c);
                     self.read_char();
                     (TokenType::ILLEGAL, vec![AsciiChar::Null])
                 }
