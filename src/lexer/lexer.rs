@@ -215,7 +215,7 @@ if (5 < 10) {
 ",
         );
 
-        let tests: [Token; 73] = [
+        let tests: Vec<Token> = vec![
             //line 1
             Token::new(
                 TokenType::LET,
