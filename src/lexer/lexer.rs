@@ -23,6 +23,15 @@ impl Lexer {
 }
 
 impl Lexer {
+    fn peek_char(&self) -> AsciiChar {
+        if self.read_position >= self.input.len() {
+            AsciiChar::Null
+        } else {
+            let ch = self.input.chars().nth(self.read_position).unwrap();
+            AsciiChar::new(ch)
+        }
+    }
+    
     fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
             self.ch = vec![AsciiChar::Null];
@@ -46,15 +55,6 @@ impl Lexer {
         }
 
         literal
-    }
-
-    fn peek_char(&self) -> AsciiChar {
-        if self.read_position >= self.input.len() {
-            AsciiChar::Null
-        } else {
-            let ch = self.input.chars().nth(self.read_position).unwrap();
-            AsciiChar::new(ch)
-        }
     }
 
     fn match_token_type(&mut self) -> (TokenType, Vec<AsciiChar>) {
