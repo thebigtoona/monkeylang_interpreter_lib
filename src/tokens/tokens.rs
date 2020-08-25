@@ -1,7 +1,6 @@
 use ascii::*;
 
 #[derive(Debug, PartialEq)]
-#[warn(non_camel_case_types)]
 pub enum TokenType {
     ILLEGAL,
     EOF,
@@ -29,7 +28,7 @@ pub enum TokenType {
     RPAREN,
     LBRACE,
     RBRACE,
-    
+
     // Keywords
     FUNCTION,
     LET,
