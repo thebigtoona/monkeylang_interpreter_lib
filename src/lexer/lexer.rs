@@ -85,7 +85,7 @@ impl Lexer {
                 if [self.peek_char()] == [AsciiChar::Equal] {
                     self.read_char();
                     (
-                        TokenType::NOT_EQ,
+                        TokenType::NotEq,
                         vec![AsciiChar::Exclamation, AsciiChar::Equal],
                     )
                 } else {
@@ -387,7 +387,7 @@ if (5 < 10) {
             // line 17:  10 != 9;
             Token::new(TokenType::INT, vec![AsciiChar::_1, AsciiChar::_0]),
             Token::new(
-                TokenType::NOT_EQ,
+                TokenType::NotEq,
                 vec![AsciiChar::Exclamation, AsciiChar::Equal],
             ),
             Token::new(TokenType::INT, vec![AsciiChar::_9]),

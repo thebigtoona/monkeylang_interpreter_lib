@@ -20,7 +20,7 @@ pub enum TokenType {
     LT,
     GT,
     EQ,
-    NOT_EQ,
+    NotEq,
 
     // Delimiters
     COMMA,
