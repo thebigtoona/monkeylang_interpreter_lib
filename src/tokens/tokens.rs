@@ -29,6 +29,7 @@ pub enum TokenType {
     RPAREN,
     LBRACE,
     RBRACE,
+    
     // Keywords
     FUNCTION,
     LET,

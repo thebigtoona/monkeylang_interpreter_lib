@@ -61,14 +61,7 @@ impl Lexer {
     fn match_token_type(&mut self) -> (TokenType, Vec<AsciiChar>) {
         let mut c = &self.ch;
         let mut default: bool = false;
-
-        while c[0].is_ascii_whitespace() {
-            self.read_char();
-            c = &self.ch;
-            println!("val of c at 73:  {:?}", &c)
-        }
-        println!("lexer.rs, line 82: value of c = {:?}", &c);
-
+        
         let result = match c.as_slice() {
             [AsciiChar::Equal] => {
                 // chk for equal or double equal
@@ -125,10 +118,10 @@ impl Lexer {
     }
 
     pub fn next_token(&mut self) -> Token {
+        while self.ch[0].is_ascii_whitespace() {
+            self.read_char();
+        }
         let (token_type, literal) = self.match_token_type();
-        // self.read_char();
-
-        println!("line 108 self.ch {:?}", self.ch);
         Token::new(token_type, literal)
     }
 }
@@ -161,15 +154,17 @@ mod tests {
         let mut l: Lexer = Lexer::new("let five cat".to_string());
         let literal = l.read_identifier();
         let ascii_chars = vec![AsciiChar::l, AsciiChar::e, AsciiChar::t];
-        assert_eq!(literal[0], AsciiChar::l);
-        assert_eq!(literal[1], AsciiChar::e);
-        assert_eq!(literal[2], AsciiChar::t);
+        assert_eq!(ascii_chars.len(), literal.len());
+        assert_eq!(ascii_chars.as_slice(), literal.as_slice());
     }
+
+
     #[test]
     fn peek_char() {
-        let mut l: Lexer = Lexer::new("==let five cat".to_string());
+        let l: Lexer = Lexer::new("==let five cat".to_string());
         assert_eq!(l.peek_char(), AsciiChar::Equal)
     }
+
 
     #[test]
     fn next_token() {
@@ -199,6 +194,7 @@ mod tests {
             assert_eq!(tok.literal, tt.literal);
         }
     }
+
 
     #[test]
     fn testing_advanced_input() {
@@ -393,6 +389,7 @@ if (5 < 10) {
             Token::new(TokenType::INT, vec![AsciiChar::_9]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
         ];
+
 
         let mut l: Lexer = Lexer::new(input);
 
