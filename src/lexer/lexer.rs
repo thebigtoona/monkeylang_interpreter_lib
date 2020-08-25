@@ -5,15 +5,15 @@ use ascii::*;
 ///
 /// # Parameters
 ///
-/// * `input` - a `String` value to lex
+/// * `input` - value to lex
 ///
-/// * `position` - a `usize` value that represents the current position of the
+/// * `position` - value that represents the current position of the
 /// lexer
 ///
-/// *`read_position` - a `usize` value that represents the position the lexer is
+/// * `read_position` - value that represents the position the lexer is
 /// currently reading (typically one ahead of the current position value)
 ///
-/// * `ch` - a `Vec<AsciiChar>`, that represents the characters the lexer is
+/// * `ch` - vector that represents the characters the lexer is
 /// currently matching / working with
 ///
 /// # Remarks

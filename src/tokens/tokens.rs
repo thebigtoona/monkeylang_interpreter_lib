@@ -39,7 +39,17 @@ pub enum TokenType {
     RETURN
 }
 
-
+/// represents a monkey lang Token for the interpreter to parse
+/// 
+/// # Parameters
+/// 
+/// * `token_type` - `TokenType` - item describing what type of identifier the
+/// lexer has read
+/// 
+/// * `literal` - `Vec<AsciiChar>` - the characters parsed to create the 
+/// identifier/keyword read by the lexer. Represented as a vector of `AsciiChar` 
+/// items.
+/// 
 #[derive(Debug, PartialEq)]
 pub struct Token {
     pub token_type: TokenType,
@@ -47,12 +57,17 @@ pub struct Token {
 }
 
 impl Token {
+    /// takes in a token type, & literal value as a vector of AsciiChar items, 
+    /// and returns a new Token
     pub fn new(token_type: TokenType, literal: Vec<AsciiChar>) -> Token {
         Token {
             token_type,
             literal,
         }
     }
+
+    /// takes in a vector of asciichar items representing a literal value from 
+    /// input, and returns a tokentype matching the value given.
     pub fn look_up_ident(literal: Vec<AsciiChar>) -> TokenType {
         if literal[0].is_ascii_digit() {
             TokenType::INT
