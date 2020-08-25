@@ -1,6 +1,26 @@
 use crate::tokens::tokens::*;
 use ascii::*;
 
+/// Represents a Lexer for monkey lang
+///
+/// # Parameters
+///
+/// * `input` - a `String` value to lex
+///
+/// * `position` - a `usize` value that represents the current position of the
+/// lexer
+///
+/// *`read_position` - a `usize` value that represents the position the lexer is
+/// currently reading (typically one ahead of the current position value)
+///
+/// * `ch` - a `Vec<AsciiChar>`, that represents the characters the lexer is
+/// currently matching / working with
+///
+/// # Remarks
+///
+/// * instanciate this with a mutable variable. the lexer needs to be mutable to
+/// adjust the positions and ch values.
+///
 struct Lexer {
     input: String,
     position: usize,
@@ -9,6 +29,12 @@ struct Lexer {
 }
 
 impl Lexer {
+    /// returns a new Lexer construct
+    ///
+    /// # Arguments
+    ///
+    /// * `input` - a `String` value to lex
+    ///
     pub fn new(input: String) -> Self {
         let mut l = Lexer {
             input: input,
@@ -23,6 +49,13 @@ impl Lexer {
 }
 
 impl Lexer {
+    /// returns next position character in Lexer input as an AsciiChar, without
+    /// modifying the Lexer or advancing the position/read_position parameters
+    ///
+    /// # Arguments
+    ///
+    /// * `&self` - a reference to the Lexer construct being used
+    ///
     fn peek_char(&self) -> AsciiChar {
         if self.read_position >= self.input.len() {
             AsciiChar::Null
@@ -31,7 +64,11 @@ impl Lexer {
             AsciiChar::new(ch)
         }
     }
-    
+    /// advances `position` and `next_position` on the lexer
+    ///
+    /// # Arguments
+    ///
+    /// * `&mut self` - a mutable reference to the Lexer construct being used
     fn read_char(&mut self) {
         if self.read_position >= self.input.len() {
             self.ch = vec![AsciiChar::Null];
@@ -44,6 +81,14 @@ impl Lexer {
         self.read_position += 1;
     }
 
+    /// returns a vector of AsciiChar items that represent the entire literal
+    /// the lexer is attempting to match/parse against. used to read IDENT and
+    /// keyword vals from the input String.
+    ///
+    /// # Arguments
+    ///
+    /// * `&mut self` - a mutable reference to the Lexer construct being used
+    ///
     fn read_identifier(&mut self) -> Vec<AsciiChar> {
         let mut literal: Vec<AsciiChar> = vec![];
         let mut c: AsciiChar = self.ch[0];
@@ -57,12 +102,20 @@ impl Lexer {
         literal
     }
 
+    /// returns `(TokenType Vec<AsciiChar>)` that references a match from the
+    /// lexer.
+    ///
+    /// # Arguments
+    ///
+    /// * `&mut self` - a mutable reference to the Lexer construct being used
+    ///
     fn match_token_type(&mut self) -> (TokenType, Vec<AsciiChar>) {
         let mut default: bool = false;
 
+        // matches the current `literal` vector as a slice with conditions
+        // nested in for ==, != and identifiers/keywords
         let result = match self.ch.as_slice() {
             [AsciiChar::Equal] => {
-                // chk for equal or double equal
                 if [self.peek_char()] == [AsciiChar::Equal] {
                     self.read_char();
                     (TokenType::EQ, vec![AsciiChar::Equal, AsciiChar::Equal])
@@ -113,6 +166,12 @@ impl Lexer {
         result
     }
 
+    /// Advances past whitespace and returns the next `Token`, after receiving
+    /// a match from `match_token_type()`.
+    ///
+    /// # Arguments
+    ///
+    /// * `&mut self` - a mutable reference to the Lexer construct being used
     pub fn next_token(&mut self) -> Token {
         while self.ch[0].is_ascii_whitespace() {
             self.read_char();
@@ -122,7 +181,10 @@ impl Lexer {
     }
 }
 
-// tests
+//
+// Tests
+//
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -154,13 +216,11 @@ mod tests {
         assert_eq!(ascii_chars.as_slice(), literal.as_slice());
     }
 
-
     #[test]
     fn peek_char() {
         let l: Lexer = Lexer::new("==let five cat".to_string());
         assert_eq!(l.peek_char(), AsciiChar::Equal)
     }
-
 
     #[test]
     fn next_token() {
@@ -190,7 +250,6 @@ mod tests {
             assert_eq!(tok.literal, tt.literal);
         }
     }
-
 
     #[test]
     fn testing_advanced_input() {
@@ -385,7 +444,6 @@ if (5 < 10) {
             Token::new(TokenType::INT, vec![AsciiChar::_9]),
             Token::new(TokenType::SEMICOLON, vec![AsciiChar::Semicolon]),
         ];
-
 
         let mut l: Lexer = Lexer::new(input);
 
