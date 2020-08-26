@@ -1,5 +1,5 @@
-use crate::tokens::tokens::*;
-use crate::lexer::lexer::*;
+use crate::tokens::tokens::{TokenType, Token};
+use crate::lexer::lexer::Lexer;
 use std::io::*;
 
 
