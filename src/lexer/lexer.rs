@@ -21,7 +21,7 @@ use ascii::*;
 /// * instanciate this with a mutable variable. the lexer needs to be mutable to
 /// adjust the positions and ch values.
 ///
-struct Lexer {
+pub struct Lexer {
     input: String,
     position: usize,
     read_position: usize,
@@ -35,7 +35,7 @@ impl Lexer {
     ///
     /// * `input` - a `String` value to lex
     ///
-    pub fn new(input: String) -> Self {
+    pub fn new(input: String) -> Lexer {
         let mut l = Lexer {
             input: input,
             position: 0,
