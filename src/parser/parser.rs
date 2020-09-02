@@ -2,7 +2,7 @@ use crate::tokens::tokens::Token;
 use crate::lexer::lexer::Lexer;
 use crate::ast::ast::*;
 
-struct Parser {
+pub struct Parser {
     lexer: Lexer;
     current_token: Token,
     peek_token: Token,
@@ -51,13 +51,13 @@ mod tests {
 let foobar = 12345;
 let y = 5;".to_string();
 
-        let mut lexer = Lexer.new(test_input);
-        let mut parser = Parser.new(&mut lexer);
-        let mut program = parser.parse_program();
+        let mut lexer: Lexer = Lexer.new(test_input);
+        let mut parser: Parser = Parser.new(&mut lexer);
+        let mut program: Result<Program> = parser.parse_program();
 
-        match program {
-            None => eprintln!("parse_program returned None")
-            Some(data) => println!("parse_program data: {:?}", data)
+        let prog = match program {
+            Err() => eprintln!("parse_program returned None")
+            Ok(prog) => println!("parse_program data: {:?}", data)
         };
 
         assert_eq!(program.statements.len(), 3);
